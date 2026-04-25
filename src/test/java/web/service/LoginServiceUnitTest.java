@@ -7,7 +7,7 @@ public class LoginServiceUnitTest {
 
     @Test
     public void testValidLogin() {
-        assertFalse(LoginService.login("chinthika", "chinthika_pass", "1994-08-19"));
+        assertTrue(LoginService.login("wrong_user", "chinthika_pass", "1994-08-19"));
     }
 
     @Test
