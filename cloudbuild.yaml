@@ -1,0 +1,11 @@
+steps:
+  - name: 'maven:3.9-eclipse-temurin-17'
+    id: 'Run Unit Tests'
+    entrypoint: 'mvn'
+    args:
+      - 'test'
+      - '-Dtest=web.service.LoginServiceUnitTest'
+      - '-Dsurefire.failIfNoSpecifiedTests=false'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
