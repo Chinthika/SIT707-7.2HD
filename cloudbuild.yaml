@@ -7,5 +7,41 @@ steps:
       - '-Dtest=web.service.LoginServiceUnitTest'
       - '-Dsurefire.failIfNoSpecifiedTests=false'
 
+  - name: 'maven:3.9-eclipse-temurin-17'
+    id: 'Build Artifact'
+    entrypoint: 'mvn'
+    args:
+      - 'package'
+      - '-DskipTests'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Docker Image'
+    args:
+      - 'build'
+      - '-t'
+      - 'australia-southeast2-docker.pkg.dev/$PROJECT_ID/webservice1-repo/webservice1:$COMMIT_SHA'
+      - '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Docker Image'
+    args:
+      - 'push'
+      - 'australia-southeast2-docker.pkg.dev/$PROJECT_ID/webservice1-repo/webservice1:$COMMIT_SHA'
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy to Cloud Run'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'webservice1'
+      - '--image'
+      - 'australia-southeast2-docker.pkg.dev/$PROJECT_ID/webservice1-repo/webservice1:$COMMIT_SHA'
+      - '--region'
+      - 'australia-southeast2'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
 options:
   logging: CLOUD_LOGGING_ONLY
